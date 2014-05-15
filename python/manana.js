@@ -1,10 +1,14 @@
+var fs     = require('fs'),
+    file   = process.argv.slice(2)[0],
+    args   = JSON.parse(fs.readFileSync(file, 'utf-8')), 
+    Manana = require(args.interpreter),
+    manana = new Manana.Manana(args.view_dir),
+    html   = manana.render(args.view, args.context);
 
-var fs = require('fs');
-var args = JSON.parse(process.argv.slice(2)[0]);
+fs.unlink(file, function(err) {
+  if (err) {
+    throw err;
+  }
+});
 
-var Manana = require(args.interpreter);
-var manana = new Manana.Manana();
-
-var res = manana.render(args.view, args.context);
-
-console.log(res);
+console.log(html);

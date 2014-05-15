@@ -1,27 +1,36 @@
-import json
+# -*- coding: utf-8 -*-
+
+import os, json
+from random import randint
 from Naked.toolshed.shell import muterun_js
 
 class MananaException(Exception):
   pass
 
 class Manana(object):
-  def __init__(self, interpreter, node_wrapper, views_dir):
+  def __init__(self, interpreter, node_wrapper, view_dir):
     self.interpreter = interpreter
     self.node_wrapper = node_wrapper
-    self.views_dir = views_dir
+    self.view_dir = view_dir
 
-  def render(self, view_file, context={}):
-    self.view = "{0}/{1}".format(self.views_dir, view_file) 
+  def render(self, view, context={}):
+    import os
+
+    self.view = view
     self.context = context
 
     self.args = {}
+    self.args['file'] = "/tmp/manana-{0}".format(str(randint(100000, 999999)))
     self.args['interpreter'] = self.interpreter
+    self.args['view_dir'] = self.view_dir
     self.args['view'] = self.view
     self.args['context'] = self.context
 
-    self.args = '\\"'.join('"{0}"'.format(chunk) for chunk in json.dumps(self.args).split('"'))
+    args = json.dumps(self.args)
 
-    self.response = muterun_js(self.node_wrapper, self.args);
+    with open(self.args['file'], 'w') as f:
+      f.write(args)
+    self.response = muterun_js(self.node_wrapper, self.args['file']);
 
     if self.response.exitcode == 0:
       self.output = self.response.stdout
