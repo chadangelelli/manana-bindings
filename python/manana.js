@@ -1,9 +1,11 @@
-var fs     = require('fs'),
-    file   = process.argv.slice(2)[0],
-    args   = JSON.parse(fs.readFileSync(file, 'utf-8')), 
-    Manana = require(args.interpreter),
-    manana = new Manana.Manana(args.view_dir),
-    html   = manana.render(args.view, args.context);
+var fs     = require('fs');
+var file   = process.argv.slice(2)[0];
+var args   = JSON.parse(fs.readFileSync(file, 'utf-8')); 
+
+var Manana = require(args.interpreter);
+var manana = new Manana.Manana(args.view_dir);
+
+var res = manana[args.method](args.view, args.context);
 
 fs.unlink(file, function(err) {
   if (err) {
@@ -11,4 +13,4 @@ fs.unlink(file, function(err) {
   }
 });
 
-console.log(html);
+console.log(res);

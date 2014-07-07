@@ -13,9 +13,8 @@ class Manana(object):
     self.node_wrapper = node_wrapper
     self.view_dir = view_dir
 
-  def render(self, view, context={}):
-    import os
-
+  # - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- --- -- -
+  def call(self, method, view, context={}):
     self.view = view
     self.context = context
 
@@ -25,6 +24,7 @@ class Manana(object):
     self.args['view_dir'] = self.view_dir
     self.args['view'] = self.view
     self.args['context'] = self.context
+    self.args['method'] = method
 
     args = json.dumps(self.args)
 
@@ -37,3 +37,15 @@ class Manana(object):
       return self.output
     else:
       raise MananaException(self.response.stderr)
+
+  # - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- --- -- -
+  def get_template(self, name):
+    return self.call('getTemplate', name)
+
+  # - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- --- -- -
+  def render(self, view, context):
+    return self.call('render', view, context)
+
+  # - -- --- -- - -- --- -- - -- --- -- - -- --- -- - -- --- -- -
+  def bottle(self, view, context):
+    return self.call('bottle', view, context)
